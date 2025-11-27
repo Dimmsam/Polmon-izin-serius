@@ -70,6 +70,42 @@ public class Monster implements Serializable {
     public void sleep() { currentState.sleep(this);}
     public void wakeUp() { currentState.wakeUp(this);}
 
+    public void updateLogic() {
+        // Kalau mati, hentikan semua proses
+        if (currentState instanceof DeadState) return;
+
+        addAgeSeconds(1); // Tambah umur 1 detik
+
+        // Jalankan efek pasif dari State (misal: tidur nambah darah)
+        if (currentState != null) currentState.onTick(this);
+
+        // --- Logika Degradasi ---
+        // Jika tidak tidur/telur, lapar bertambah
+        if (stage != EvolutionStage.EGG && !(currentState instanceof SleepState)) {
+            // Lapar naik pelan-pelan
+            // Bisa disesuaikan angkanya
+        }
+
+        // --- Cek Transisi Status Otomatis ---
+        if (hp <= 0) {
+            setState(new DeadState());
+        }
+        else if (hunger >= 80 && !(currentState instanceof SickState)) {
+            // Jika lapar > 80, otomatis jadi Sakit
+            setState(new SickState());
+        }
+
+        // --- Cek Evolusi ---
+        if (EvolutionManager.canEvolve(this)) {
+            EvolutionManager.evolve(this);
+
+            // Efek Evolusi: Ganti Nama, Full Heal, Happy
+            this.name = MonsterDatabase.getName(this.species, this.stage);
+            this.hp = maxHP;
+            this.happiness = 100;
+        }
+    }
+
     public String getStateName() {
         return (currentState != null) ? currentState.getClass().getSimpleName() : "None";
     }
