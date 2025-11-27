@@ -18,6 +18,10 @@ public class Monster implements Serializable {
     private int happiness;
     private long lastFedTimestamp;
     private long lastCareTimestamp;
+    private int hunger; // 0-100
+    private int ageSeconds;
+    private EvolutionStage stage;
+    private SpeciesType species;
 
     public Monster(int ID, String birthday, String name,
                    long lastFedTimestamp, long lastCareTimestamp,
@@ -33,8 +37,32 @@ public class Monster implements Serializable {
         this.happiness = happiness;
         this.lastFedTimestamp = lastFedTimestamp;
         this.lastCareTimestamp = lastCareTimestamp;
+        this.hunger = 0;
+        this.ageSeconds = 0;
+        this.stage = EvolutionStage.EGG;
+        this.species = SpeciesType.fromId(ID);
+        this.name = MonsterDatabase.getName(this.species, this.stage);
     }
 
+    // --- New Modifiers ---
+    public void modifyHealth(int val) {
+        this.hp = Math.max(0, Math.min(maxHP, this.hp + val));
+    }
+    public void modifyHunger(int val) {
+        this.hunger = Math.max(0, Math.min(100, this.hunger + val));
+    }
+    public void modifyHappiness(int val) {
+        this.happiness = Math.max(0, Math.min(100, this.happiness + val));
+    }
+    public void setStage(EvolutionStage stage) { this.stage = stage; }
+
+    public int getHunger() { return hunger; }
+    public int getAgeSeconds() { return ageSeconds; }
+    public EvolutionStage getStage() { return stage; }
+    public SpeciesType getSpecies() { return species; }
+    public void addAgeSeconds(int sec) { this.ageSeconds += sec; }
+    public void setName(String name) { this.name = name; }
+    public void setHp(int hp) { this.hp = hp; }
     public int getID() { return ID; }
     public String getName() { return name; }
     public String getBirthday() { return birthday; }
