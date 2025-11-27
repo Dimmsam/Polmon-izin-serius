@@ -1,7 +1,57 @@
 package core;
 
+import model.Monster;
+import utils.MonsterReader;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Random;
+
 public class Main {
+    private static final String SAVE_FILE = "polmon.xml";
+
     public static void main(String[] args) {
-        System.out.println("Polmon");
+        Monster monster = loadOrCreateMonster();
+
+        GameEngine engine = GameEngine.getInstance();
+        engine.initialize(monster, null);
+
+        Runtime.getRuntime().addShutdownHook(new ShutdownHandler(engine));
+
+        engine.start();
+    }
+
+    private static Monster loadOrCreateMonster() {
+        Monster monster = MonsterReader.read(new File("./"), SAVE_FILE);
+
+        if (monster != null) {
+            return monster;
+        }
+
+        return createNewMonster();
+    }
+
+    private static Monster createNewMonster() {
+        long now = new Date().getTime();
+        String birthday = new SimpleDateFormat("MM/dd/yyyy").format(now);
+
+        Random random = new Random();
+        int speciesID = random.nextInt(3);
+
+        String[] names = {"Kucingmon", "Semutmon", "Nyamukmon"};
+        String name = names[speciesID];
+
+        return new Monster(
+                speciesID,
+                birthday,
+                name,
+                now,
+                now,
+                5,
+                5,
+                1,
+                3,
+                100
+        );
     }
 }
