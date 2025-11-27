@@ -52,8 +52,12 @@ public class MonsterReader {
 
                 int happiness = Integer.parseInt(getElementValue(el, "Happiness"));
 
-                return new Monster(ID, birthday, name, lastFedTimestamp, lastCareTimestamp,
+                Monster monster = new Monster(ID, birthday, name, lastFedTimestamp, lastCareTimestamp,
                         hp, maxHP, minDmg, maxDmg, happiness);
+
+                TimeSimulator.simulateTime(monster);
+
+                return monster;
             }
 
             return null;
