@@ -1,10 +1,12 @@
 package core;
 
 import model.Monster;
+import utils.MonsterWriter;
 import javax.swing.Timer;
 import javax.swing.JPanel;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.io.File;
 
 public class GameEngine {
     private static GameEngine instance;
@@ -18,6 +20,7 @@ public class GameEngine {
 
     private static final int VISUAL_DELAY = 500;
     private static final int HOURLY_DELAY = 3600000;
+    private static final String SAVE_FILE = "polmon.xml";
 
     private GameEngine() {
         this.isRunning = false;
@@ -76,6 +79,12 @@ public class GameEngine {
         }
 
         isRunning = false;
+    }
+
+    public void save() {
+        if (monster != null) {
+            MonsterWriter.write(monster, new File("./"), SAVE_FILE);
+        }
     }
 
     public boolean isRunning() {
