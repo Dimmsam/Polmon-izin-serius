@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
 import java.util.Date;
+import model.state.*;
 
 public class Monster implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -23,6 +24,9 @@ public class Monster implements Serializable {
     private EvolutionStage stage;
     private SpeciesType species;
 
+    private PolmonState currentState;
+
+
     public Monster(int ID, String birthday, String name,
                    long lastFedTimestamp, long lastCareTimestamp,
                    int hp, int maxHP, int minDamage, int maxDamage,
@@ -41,6 +45,7 @@ public class Monster implements Serializable {
         this.ageSeconds = 0;
         this.stage = EvolutionStage.EGG;
         this.species = SpeciesType.fromId(ID);
+        this.currentState = new NormalState();
         this.name = MonsterDatabase.getName(this.species, this.stage);
     }
 
@@ -54,7 +59,20 @@ public class Monster implements Serializable {
     public void modifyHappiness(int val) {
         this.happiness = Math.max(0, Math.min(100, this.happiness + val));
     }
-    public void setStage(EvolutionStage stage) { this.stage = stage; }
+    public void setStage(EvolutionStage stage) { this.stage = stage;}
+
+    public void setState(PolmonState state) {
+        this.currentState = state;
+        this.currentState.onEnter(this);
+    }
+    public void feed() { currentState.feed(this);}
+    public void play() { currentState.play(this);}
+    public void sleep() { currentState.sleep(this);}
+    public void wakeUp() { currentState.wakeUp(this);}
+
+    public String getStateName() {
+        return (currentState != null) ? currentState.getClass().getSimpleName() : "None";
+    }
 
     public int getHunger() { return hunger; }
     public int getAgeSeconds() { return ageSeconds; }
@@ -73,6 +91,7 @@ public class Monster implements Serializable {
     public int getHappiness() { return happiness; }
     public long getLastFedTimestamp() { return lastFedTimestamp; }
     public long getLastCareTimestamp() { return lastCareTimestamp; }
+
 
     public int getHoursSinceLastFed() {
         long now = new Date().getTime();
