@@ -42,4 +42,9 @@ public class Monster implements Serializable {
     public int getHappiness() { return happiness; }
     public long getLastFedTimestamp() { return lastFedTimestamp; }
     public long getLastCareTimestamp() { return lastCareTimestamp; }
+
+    @Override
+    public String toString() {
+        return name + " (HP:" + hp + "/" + maxHP + ", Happiness:" + happiness + ")";
+    }
 }
