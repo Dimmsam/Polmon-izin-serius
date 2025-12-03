@@ -2,6 +2,7 @@ package core;
 
 import model.Monster;
 import utils.MonsterReader;
+import view.GameWindow;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -19,6 +20,9 @@ public class Main {
         Runtime.getRuntime().addShutdownHook(new ShutdownHandler(engine));
 
         engine.start();
+        
+        GameWindow window = new GameWindow(engine);
+        window.display();
     }
 
     private static Monster loadOrCreateMonster() {
@@ -54,6 +58,6 @@ public class Main {
                 100,
                 100,
                 100
-        );
-    }
+        );
+    }
 }
