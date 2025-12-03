@@ -104,8 +104,9 @@ public class Monster implements Serializable {
         if (hp <= 0) {
             setState(new DeadState());
         }
-        else if (hunger >= 80 && !(currentState instanceof HungryState)) {
-            setState(new HungryState());
+        else if (hunger < 50 && happiness > 30 && !(currentState instanceof NormalState)
+                && !(currentState instanceof SleepState) && !(currentState instanceof DeadState)) {
+            setState(new NormalState());
         }
         else if (happiness <= 20 && !(currentState instanceof BoredState)) {
             setState(new BoredState());
@@ -177,6 +178,14 @@ public class Monster implements Serializable {
         this.hp = newHP;
         if (hp > maxHP) hp = maxHP;
         if (hp < 0) hp = 0;
+    }
+
+    public void updateLastFedTimestamp() {
+        this.lastFedTimestamp = new Date().getTime();
+    }
+
+    public void updateLastCareTimestamp() {
+        this.lastCareTimestamp = new Date().getTime();
     }
 
     @Override

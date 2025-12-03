@@ -18,6 +18,7 @@ public class NormalState implements PolmonState {
     public void feed(Monster ctx) {
         ctx.modifyHunger(-20);
         ctx.modifyHealth(5);
+        ctx.updateLastFedTimestamp();
     }
 
     @Override
