@@ -1,6 +1,8 @@
 package utils;
 
 import model.Monster;
+import model.EvolutionStage;
+import model.SpeciesType;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import org.w3c.dom.Document;
@@ -25,8 +27,9 @@ public class MonsterReader {
             doc.getDocumentElement().normalize();
 
             String version = doc.getDocumentElement().getAttribute("version");
-            if (!version.equals("1.1")) {
-                throw new Exception("Incompatible save version: " + version);
+            if (!version.equals("2.0")) {
+                System.out.println("Old save version detected, creating new monster");
+                return null;
             }
 
             Node monsterNode = doc.getElementsByTagName("Monster").item(0);
@@ -37,10 +40,15 @@ public class MonsterReader {
                 int ID = Integer.parseInt(getElementValue(el, "ID"));
                 String name = getElementValue(el, "Name");
                 String birthday = getElementValue(el, "Birthday");
+                String speciesStr = getElementValue(el, "Species");
+                String stageStr = getElementValue(el, "Stage");
+                int ageSeconds = Integer.parseInt(getElementValue(el, "AgeSeconds"));
 
                 Element stats = (Element) el.getElementsByTagName("Stats").item(0);
                 Element health = (Element) stats.getElementsByTagName("Health").item(0);
                 Element damage = (Element) stats.getElementsByTagName("Damage").item(0);
+                Element attributes = (Element) stats.getElementsByTagName("Attributes").item(0);
+                Element energyEl = (Element) stats.getElementsByTagName("Energy").item(0);
 
                 int hp = Integer.parseInt(getElementValue(health, "Current"));
                 int maxHP = Integer.parseInt(getElementValue(health, "Max"));
@@ -50,10 +58,14 @@ public class MonsterReader {
                 int minDmg = Integer.parseInt(getElementValue(damage, "Min"));
                 int maxDmg = Integer.parseInt(getElementValue(damage, "Max"));
 
-                int happiness = Integer.parseInt(getElementValue(el, "Happiness"));
+                int happiness = Integer.parseInt(getElementValue(attributes, "Happiness"));
+                int hunger = Integer.parseInt(getElementValue(attributes, "Hunger"));
+
+                int energy = Integer.parseInt(getElementValue(energyEl, "Current"));
+                int maxEnergy = Integer.parseInt(getElementValue(energyEl, "Max"));
 
                 Monster monster = new Monster(ID, birthday, name, lastFedTimestamp, lastCareTimestamp,
-                        hp, maxHP, minDmg, maxDmg, happiness);
+                        hp, maxHP, minDmg, maxDmg, happiness, energy, maxEnergy);
 
                 TimeSimulator.simulateTime(monster);
 

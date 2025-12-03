@@ -1,6 +1,8 @@
 package utils;
 
 import model.Monster;
+import model.EvolutionStage;
+import model.SpeciesType;
 import java.io.File;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -23,9 +25,9 @@ public class MonsterWriter {
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
             Document doc = docBuilder.newDocument();
 
-            Element root = doc.createElement("eTamagotchi");
+            Element root = doc.createElement("Polmon");
             Attr version = doc.createAttribute("version");
-            version.setValue("1.1");
+            version.setValue("2.0");
             root.setAttributeNode(version);
             doc.appendChild(root);
 
@@ -34,26 +36,35 @@ public class MonsterWriter {
             appendChild(doc, monster, "ID", String.valueOf(mon.getID()));
             appendChild(doc, monster, "Birthday", mon.getBirthday());
             appendChild(doc, monster, "Name", mon.getName());
+            appendChild(doc, monster, "Species", mon.getSpecies().name());
+            appendChild(doc, monster, "Stage", mon.getStage().name());
+            appendChild(doc, monster, "AgeSeconds", String.valueOf(mon.getAgeSeconds()));
 
             Element stats = doc.createElement("Stats");
-            Element health = doc.createElement("Health");
 
-            appendChild(doc, health, "Max", String.valueOf(mon.getMaxHP()));
+            Element health = doc.createElement("Health");
             appendChild(doc, health, "Current", String.valueOf(mon.getHP()));
+            appendChild(doc, health, "Max", String.valueOf(mon.getMaxHP()));
             appendChild(doc, health, "FeedTime", String.valueOf(mon.getLastFedTimestamp()));
             appendChild(doc, health, "CareTime", String.valueOf(mon.getLastCareTimestamp()));
-
             stats.appendChild(health);
 
             Element damage = doc.createElement("Damage");
-            appendChild(doc, damage, "Max", String.valueOf(mon.getMaxDamage()));
             appendChild(doc, damage, "Min", String.valueOf(mon.getMinDamage()));
+            appendChild(doc, damage, "Max", String.valueOf(mon.getMaxDamage()));
             stats.appendChild(damage);
 
+            Element attributes = doc.createElement("Attributes");
+            appendChild(doc, attributes, "Happiness", String.valueOf(mon.getHappiness()));
+            appendChild(doc, attributes, "Hunger", String.valueOf(mon.getHunger()));
+            stats.appendChild(attributes);
+
+            Element energy = doc.createElement("Energy");
+            appendChild(doc, energy, "Current", String.valueOf(mon.getEnergy()));
+            appendChild(doc, energy, "Max", String.valueOf(mon.getMaxEnergy()));
+            stats.appendChild(energy);
+
             monster.appendChild(stats);
-
-            appendChild(doc, monster, "Happiness", String.valueOf(mon.getHappiness()));
-
             root.appendChild(monster);
 
             File saveFolder = new File(dir, "saves");

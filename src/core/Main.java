@@ -36,9 +36,9 @@ public class Main {
         String birthday = new SimpleDateFormat("MM/dd/yyyy").format(now);
 
         Random random = new Random();
-        int speciesID = random.nextInt(3);
+        int speciesID = random.nextInt(2);
 
-        String[] names = {"Kucingmon", "Semutmon", "Nyamukmon"};
+        String[] names = {"Kucingmon", "Slimemon"};
         String name = names[speciesID];
 
         return new Monster(
@@ -51,6 +51,8 @@ public class Main {
                 5,
                 1,
                 3,
+                100,
+                100,
                 100
         );
     }
