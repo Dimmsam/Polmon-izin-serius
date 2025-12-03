@@ -59,5 +59,5 @@ public class GameCanvas extends JPanel {
     
     private String getSimpleStateName(String fullName) {
         return fullName.replace("State", "").toLowerCase();
-    }
+    }
 }

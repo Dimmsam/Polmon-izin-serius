@@ -97,6 +97,6 @@ public class Renderer {
         
         g.drawString("Name: " + monster.getName(), x, y);
         g.drawString("State: " + monster.getStateName(), x, y + 20);
-        g.drawString("Stage: " + monster.getStage(), x, y + 40);
-    }
+        g.drawString("Stage: " + monster.getStage(), x, y + 40);
+    }
 }

@@ -30,5 +30,5 @@ public class StatsDialog {
         
         JOptionPane.showMessageDialog(parent, sb.toString(), 
             "Monster Stats", JOptionPane.INFORMATION_MESSAGE);
-    }
+    }
 }

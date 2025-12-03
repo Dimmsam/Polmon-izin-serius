@@ -76,6 +76,6 @@ public class ActionHandler {
                 engine.save();
                 JOptionPane.showMessageDialog(window, "Game saved!");
             }
-        };
-    }
+        };
+    }
 }

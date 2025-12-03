@@ -42,6 +42,6 @@ public class PNGAdapter implements ImageAdapter {
         Graphics2D g = result.createGraphics();
         g.drawImage(scaled, 0, 0, null);
         g.dispose();
-        return result;
-    }
+        return result;
+    }
 }

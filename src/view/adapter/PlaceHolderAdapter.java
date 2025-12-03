@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
-public class PlaceholderAdapter implements ImageAdapter {
+public class PlaceHolderAdapter implements ImageAdapter {
     
     @Override
     public BufferedImage getImage(String resourcePath) {
@@ -23,6 +23,6 @@ public class PlaceholderAdapter implements ImageAdapter {
         g.drawRect(0, 0, width - 1, height - 1);
         
         g.dispose();
-        return img;
-    }
+        return img;
+    }
 }
