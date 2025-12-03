@@ -137,7 +137,7 @@ public class Monster implements Serializable {
     public int getID() { return ID; }
     public String getName() { return name; }
     public String getBirthday() { return birthday; }
-    public PolmonState getCurrentState() { return currentState; }
+    public PolmonState getCurrentState() { return currentState;}
     public int getHP() { return hp; }
     public int getMaxHP() { return maxHP; }
     public int getMinDamage() { return minDamage; }

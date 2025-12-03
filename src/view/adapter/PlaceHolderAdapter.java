@@ -26,6 +26,6 @@ public class PlaceHolderAdapter implements ImageAdapter {
         g.drawRect(0, 0, width - 1, height - 1);
         
         g.dispose();
-        return img;
-    }
+        return img;
+    }
 }

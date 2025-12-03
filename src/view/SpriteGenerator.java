@@ -122,6 +122,6 @@ public class SpriteGenerator {
                        stage.name().substring(0, 1) + 
                        state.substring(0, 1).toUpperCase();
         
-        g.drawString(label, SPRITE_WIDTH/2 - 10, SPRITE_HEIGHT - 5);
-    }
+        g.drawString(label, SPRITE_WIDTH/2 - 10, SPRITE_HEIGHT - 5);
+    }
 }

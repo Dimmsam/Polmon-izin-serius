@@ -2,7 +2,7 @@ package view;
 
 import view.adapter.ImageAdapter;
 import view.adapter.PNGAdapter;
-import view.adapter.PlaceholderAdapter;
+import view.adapter.PlaceHolderAdapter;
 import model.SpeciesType;
 import model.EvolutionStage;
 import java.awt.image.BufferedImage;
@@ -17,7 +17,7 @@ public class AssetLoader {
     
     private AssetLoader() {
         this.pngAdapter = new PNGAdapter();
-        this.placeholderAdapter = new PlaceholderAdapter();
+        this.placeholderAdapter = new PlaceHolderAdapter();
         this.cache = new HashMap<>();
     }
     
@@ -60,6 +60,6 @@ public class AssetLoader {
         }
         
         cache.put("egg", img);
-        return img;
-    }
+        return img;
+    }
 }
