@@ -117,14 +117,9 @@ public class GameCanvas extends JPanel {
     }
 
     private void renderDeathOverlay(Graphics2D g, int x, int y, int width, int height) {
-        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
-        g.setColor(Color.BLACK);
-        g.fillRect(x, y, width, height);
-        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
-
         g.setColor(Color.RED);
-        g.setFont(new Font("Arial", Font.BOLD, 18));
-        g.drawString("RIP", x + width/2 - 15, y + height/2);
+        g.setFont(new Font("Arial", Font.BOLD, 24));
+        g.drawString("RIP", x + width/2 - 20, y + height/2);
     }
 
     private int getAnimationOffset(Monster monster) {

@@ -70,10 +70,7 @@ public class MonsterReader {
                 EvolutionStage stage = EvolutionStage.valueOf(stageStr);
                 monster.setStage(stage);
                 monster.setName(name);
-
-                for (int i = 0; i < ageSeconds; i++) {
-                    monster.addAgeSeconds(1);
-                }
+                monster.setAgeSeconds(ageSeconds);
 
                 TimeSimulator.simulateTime(monster);
 

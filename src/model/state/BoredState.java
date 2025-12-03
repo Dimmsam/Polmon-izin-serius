@@ -17,6 +17,7 @@ public class BoredState implements PolmonState {
     @Override
     public void feed(Monster ctx) {
         ctx.modifyHunger(-10);
+        ctx.updateLastFedTimestamp();
         System.out.println("Makan tanpa semangat");
     }
 

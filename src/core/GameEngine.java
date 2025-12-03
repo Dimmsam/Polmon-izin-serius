@@ -15,6 +15,7 @@ public class GameEngine {
     private boolean isRunning;
     private Timer visualTimer;
     private Timer hourlyTimer;
+    private Timer logicTimer;
     private Monster monster;
     private JPanel canvas;
 
@@ -62,8 +63,8 @@ public class GameEngine {
                 }
             }
         });
-        
-        Timer logicTimer = new Timer(1000, new ActionListener() {
+
+        logicTimer = new Timer(1000, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (monster != null) {
                     monster.updateLogic();
@@ -86,6 +87,10 @@ public class GameEngine {
 
         if (hourlyTimer != null) {
             hourlyTimer.stop();
+        }
+
+        if (logicTimer != null) {
+            logicTimer.stop();
         }
 
         isRunning = false;

@@ -40,6 +40,10 @@ public class AssetLoader {
 
         BufferedImage img = pngAdapter.getImage(path);
 
+        if (img == null) {
+            img = SpriteGenerator.generateSprite(species, stage, state);
+        }
+
         cache.put(key, img);
         return img;
     }

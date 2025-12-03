@@ -67,6 +67,10 @@ public class Monster implements Serializable {
         this.energy = Math.max(0, Math.min(maxEnergy, this.energy + val));
     }
 
+    public void setAgeSeconds(int ageSeconds) {
+        this.ageSeconds = ageSeconds;
+    }
+
     public void setStage(EvolutionStage stage) {
         this.stage = stage;
     }
@@ -113,20 +117,28 @@ public class Monster implements Serializable {
             currentState.onTick(this);
         }
 
+        // Check Dead first
         if (hp <= 0) {
             setState(new DeadState());
+            return;  // ← TAMBAH RETURN
         }
-        else if (hunger >= 80 && !(currentState instanceof HungryState)) {
+
+        // Check Hungry
+        if (hunger >= 80 && !(currentState instanceof HungryState)) {
             setState(new HungryState());
         }
+        // Check Bored
         else if (happiness <= 20 && !(currentState instanceof BoredState)) {
             setState(new BoredState());
         }
-        else if (hunger < 50 && happiness > 30 && !(currentState instanceof NormalState)
-                && !(currentState instanceof SleepState) && !(currentState instanceof DeadState)) {
+        // Back to Normal
+        else if (hunger < 50 && happiness > 30 &&
+                !(currentState instanceof NormalState) &&
+                !(currentState instanceof SleepState)) {
             setState(new NormalState());
         }
 
+        // Check Evolution
         if (EvolutionManager.canEvolve(this)) {
             EvolutionManager.evolve(this);
         }

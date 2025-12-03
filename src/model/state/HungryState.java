@@ -18,7 +18,7 @@ public class HungryState implements PolmonState {
     public void feed(Monster ctx) {
         ctx.modifyHunger(-30);
         ctx.modifyHealth(10);
-
+        ctx.updateLastFedTimestamp();
         if (ctx.getHunger() < 50) {
             ctx.setState(new NormalState());
         }
