@@ -10,9 +10,8 @@ public class SleepState implements PolmonState {
 
     @Override
     public void onTick(Monster ctx) {
-        // Regen HP saat tidur
         ctx.modifyHealth(5);
-        ctx.modifyHappiness(1);
+        ctx.modifyEnergy(10); // [UPDATE] Tidur memulihkan Energy dengan cepat
     }
 
     @Override
@@ -35,4 +34,6 @@ public class SleepState implements PolmonState {
         System.out.println("Bangun!");
         ctx.setState(new NormalState());
     }
+
+
 }

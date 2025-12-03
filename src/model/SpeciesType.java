@@ -1,13 +1,10 @@
 package model;
 
 public enum SpeciesType {
-    FIRE, WATER, GRASS;
+    FIRE, WATER; // Cukup 2 jenis sesuai gambar
 
-    // Helper untuk konversi ID angka (legacy) ke Enum
     public static SpeciesType fromId(int id) {
         if (id == 0) return FIRE;
-        if (id == 1) return WATER;
-        if (id == 2) return GRASS;
-        return FIRE; // Default
+        return WATER; // Default ke WATER jika ID 1 atau lainnya
     }
 }

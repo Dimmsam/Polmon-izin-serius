@@ -17,6 +17,7 @@ public class Monster implements Serializable {
     private int minDamage;
     private int maxDamage;
     private int happiness;
+    private int energy;
     private long lastFedTimestamp;
     private long lastCareTimestamp;
     private int hunger; // 0-100
@@ -39,6 +40,8 @@ public class Monster implements Serializable {
         this.minDamage = minDamage;
         this.maxDamage = maxDamage;
         this.happiness = happiness;
+        this.hunger = 0;
+        this.energy = 100;
         this.lastFedTimestamp = lastFedTimestamp;
         this.lastCareTimestamp = lastCareTimestamp;
         this.hunger = 0;
@@ -52,6 +55,9 @@ public class Monster implements Serializable {
     // --- New Modifiers ---
     public void modifyHealth(int val) {
         this.hp = Math.max(0, Math.min(maxHP, this.hp + val));
+    }
+    public void modifyEnergy(int val) {
+        this.energy = Math.max(0, Math.min(100, this.energy + val));
     }
     public void modifyHunger(int val) {
         this.hunger = Math.max(0, Math.min(100, this.hunger + val));
@@ -71,38 +77,71 @@ public class Monster implements Serializable {
     public void wakeUp() { currentState.wakeUp(this);}
 
     public void updateLogic() {
-        // Kalau mati, hentikan semua proses
         if (currentState instanceof DeadState) return;
 
-        addAgeSeconds(1); // Tambah umur 1 detik
-
-        // Jalankan efek pasif dari State (misal: tidur nambah darah)
+        addAgeSeconds(1);
         if (currentState != null) currentState.onTick(this);
 
-        // --- Logika Degradasi ---
-        // Jika tidak tidur/telur, lapar bertambah
-        if (stage != EvolutionStage.EGG && !(currentState instanceof SleepState)) {
-            // Lapar naik pelan-pelan
-            // Bisa disesuaikan angkanya
+        // --- Logika Degradasi Pasif ---
+        if (stage != EvolutionStage.EGG) {
+            if (!(currentState instanceof SleepState)) {
+                modifyHunger(2);       // Lapar nambah
+                modifyHappiness(-1);   // Bahagia turun (lama2 bosan)
+                modifyEnergy(-1);      // Energy turun (lama2 ngantuk)
+            }
         }
 
         // --- Cek Transisi Status Otomatis ---
         if (hp <= 0) {
             setState(new DeadState());
         }
-        else if (hunger >= 80 && !(currentState instanceof SickState)) {
+        else if (hunger >= 80 && !(currentState instanceof HungryState)) {
             // Jika lapar > 80, otomatis jadi Sakit
-            setState(new SickState());
+            setState(new HungryState());
         }
 
         // --- Cek Evolusi ---
         if (EvolutionManager.canEvolve(this)) {
             EvolutionManager.evolve(this);
-
-            // Efek Evolusi: Ganti Nama, Full Heal, Happy
             this.name = MonsterDatabase.getName(this.species, this.stage);
             this.hp = maxHP;
             this.happiness = 100;
+            this.energy = 100;
+        }
+    }
+    // Method baru untuk mengatur prioritas State
+    private void checkStatusTransitions() {
+        // 1. Prioritas Tertinggi: MATI
+        if (hp <= 0) {
+            if (!(currentState instanceof DeadState)) setState(new DeadState());
+            return;
+        }
+
+        // 2. Jika sedang Tidur, jangan diganggu status lain (kecuali bangun manual)
+        if (currentState instanceof SleepState) {
+            // Opsional: Bangun otomatis jika energy penuh
+            if (energy >= 100) {
+                System.out.println("Energi penuh! Bangun otomatis.");
+                setState(new NormalState());
+            }
+            return;
+        }
+
+        // 3. Cek Status Buruk (Prioritas: Lapar > Bosan > Ngantuk)
+        if (hunger >= 80) {
+            if (!(currentState instanceof HungryState)) setState(new HungryState());
+        }
+        else if (happiness <= 20) {
+            if (!(currentState instanceof BoredState)) setState(new BoredState());
+        }
+        else if (energy <= 10) {
+            // Otomatis ketiduran kalau energi habis banget
+            System.out.println("Pingsan karena kelelahan...");
+            setState(new SleepState());
+        }
+        // 4. Jika semua aman, kembali ke Normal
+        else {
+            if (!(currentState instanceof NormalState)) setState(new NormalState());
         }
     }
 
@@ -127,6 +166,7 @@ public class Monster implements Serializable {
     public int getHappiness() { return happiness; }
     public long getLastFedTimestamp() { return lastFedTimestamp; }
     public long getLastCareTimestamp() { return lastCareTimestamp; }
+    public int getEnergy() { return energy; }
 
 
     public int getHoursSinceLastFed() {

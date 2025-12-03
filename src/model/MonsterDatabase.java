@@ -8,15 +8,11 @@ public class MonsterDatabase {
             case FIRE:
                 if (stage == EvolutionStage.BABY) return "Charmby";
                 if (stage == EvolutionStage.CHILD) return "Charmeleon";
-                return "Charizard";
+                return "Charizard"; // Adult
             case WATER:
                 if (stage == EvolutionStage.BABY) return "Squirtby";
                 if (stage == EvolutionStage.CHILD) return "Wartortle";
-                return "Blastoise";
-            case GRASS:
-                if (stage == EvolutionStage.BABY) return "Bulbaby";
-                if (stage == EvolutionStage.CHILD) return "Ivysaur";
-                return "Venusaur";
+                return "Blastoise"; // Adult
             default: return "Unknown";
         }
     }
