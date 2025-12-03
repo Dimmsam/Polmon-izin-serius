@@ -1,12 +1,12 @@
 package core;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import javax.swing.JPanel;
+import javax.swing.Timer;
 import model.Monster;
 import utils.MonsterWriter;
-import javax.swing.Timer;
-import javax.swing.JPanel;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.io.File;
 
 public class GameEngine {
     private static GameEngine instance;
@@ -62,10 +62,20 @@ public class GameEngine {
                 }
             }
         });
+        
+        Timer logicTimer = new Timer(1000, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (monster != null) {
+                    monster.updateLogic();
+                }
+            }
+        });
 
         visualTimer.start();
         hourlyTimer.start();
+        logicTimer.start();
     }
+
 
     public void stop() {
         if (!isRunning) return;

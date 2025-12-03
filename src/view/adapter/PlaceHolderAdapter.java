@@ -6,9 +6,12 @@ import java.awt.image.BufferedImage;
 
 public class PlaceHolderAdapter implements ImageAdapter {
     
+    private static final int DEFAULT_WIDTH = 48;
+    private static final int DEFAULT_HEIGHT = 64;
+    
     @Override
     public BufferedImage getImage(String resourcePath) {
-        return getImage(resourcePath, 64, 64);
+        return getImage(resourcePath, DEFAULT_WIDTH, DEFAULT_HEIGHT);
     }
     
     @Override
@@ -23,6 +26,6 @@ public class PlaceHolderAdapter implements ImageAdapter {
         g.drawRect(0, 0, width - 1, height - 1);
         
         g.dispose();
-        return img;
-    }
+        return img;
+    }
 }

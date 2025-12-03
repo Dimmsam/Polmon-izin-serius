@@ -2,7 +2,7 @@ package view;
 
 import view.adapter.ImageAdapter;
 import view.adapter.PNGAdapter;
-import view.adapter.PlaceHolderAdapter;
+import view.adapter.PlaceholderAdapter;
 import model.SpeciesType;
 import model.EvolutionStage;
 import java.awt.image.BufferedImage;
@@ -17,7 +17,7 @@ public class AssetLoader {
     
     private AssetLoader() {
         this.pngAdapter = new PNGAdapter();
-        this.placeholderAdapter = new PlaceHolderAdapter();
+        this.placeholderAdapter = new PlaceholderAdapter();
         this.cache = new HashMap<>();
     }
     
@@ -38,10 +38,10 @@ public class AssetLoader {
         String path = "/images/" + species.name().toLowerCase() + "_" + 
                       stage.name().toLowerCase() + "_" + state.toLowerCase() + ".png";
         
-        BufferedImage img = pngAdapter.getImage(path, 64, 64);
+        BufferedImage img = pngAdapter.getImage(path);
         
         if (img == null) {
-            img = placeholderAdapter.getImage(path, 64, 64);
+            img = SpriteGenerator.generateSprite(species, stage, state);
         }
         
         cache.put(key, img);
@@ -53,13 +53,13 @@ public class AssetLoader {
             return cache.get("egg");
         }
         
-        BufferedImage img = pngAdapter.getImage("/images/egg.png", 64, 64);
+        BufferedImage img = pngAdapter.getImage("/images/egg.png");
         
         if (img == null) {
-            img = placeholderAdapter.getImage("/images/egg.png", 64, 64);
+            img = SpriteGenerator.generateEgg();
         }
         
         cache.put("egg", img);
-        return img;
-    }
+        return img;
+    }
 }

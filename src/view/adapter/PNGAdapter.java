@@ -9,9 +9,12 @@ import java.net.URL;
 
 public class PNGAdapter implements ImageAdapter {
     
+    private static final int DEFAULT_WIDTH = 48;
+    private static final int DEFAULT_HEIGHT = 64;
+    
     @Override
     public BufferedImage getImage(String resourcePath) {
-        return getImage(resourcePath, -1, -1);
+        return getImage(resourcePath, DEFAULT_WIDTH, DEFAULT_HEIGHT);
     }
     
     @Override
@@ -42,6 +45,6 @@ public class PNGAdapter implements ImageAdapter {
         Graphics2D g = result.createGraphics();
         g.drawImage(scaled, 0, 0, null);
         g.dispose();
-        return result;
-    }
+        return result;
+    }
 }
