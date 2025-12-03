@@ -1,8 +1,8 @@
 package model;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import model.state.*;
 
@@ -137,6 +137,7 @@ public class Monster implements Serializable {
     public int getID() { return ID; }
     public String getName() { return name; }
     public String getBirthday() { return birthday; }
+    public PolmonState getCurrentState() { return currentState; }
     public int getHP() { return hp; }
     public int getMaxHP() { return maxHP; }
     public int getMinDamage() { return minDamage; }
