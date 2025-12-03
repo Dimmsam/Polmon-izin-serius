@@ -92,8 +92,20 @@ public class Monster implements Serializable {
         currentState.wakeUp(this);
     }
 
+    public boolean isEgg() {
+        return stage == EvolutionStage.EGG;
+    }
+
     public void updateLogic() {
         if (currentState instanceof DeadState) return;
+
+        if (isEgg()) {
+            addAgeSeconds(1);
+            if (EvolutionManager.canEvolve(this)) {
+                EvolutionManager.evolve(this);
+            }
+            return;
+        }
 
         addAgeSeconds(1);
 
@@ -104,15 +116,14 @@ public class Monster implements Serializable {
         if (hp <= 0) {
             setState(new DeadState());
         }
-        else if (hunger < 50 && happiness > 30 && !(currentState instanceof NormalState)
-                && !(currentState instanceof SleepState) && !(currentState instanceof DeadState)) {
-            setState(new NormalState());
+        else if (hunger >= 80 && !(currentState instanceof HungryState)) {
+            setState(new HungryState());
         }
         else if (happiness <= 20 && !(currentState instanceof BoredState)) {
             setState(new BoredState());
         }
-        else if (hunger < 50 && happiness > 50 && !(currentState instanceof NormalState)
-                && !(currentState instanceof SleepState)) {
+        else if (hunger < 50 && happiness > 30 && !(currentState instanceof NormalState)
+                && !(currentState instanceof SleepState) && !(currentState instanceof DeadState)) {
             setState(new NormalState());
         }
 

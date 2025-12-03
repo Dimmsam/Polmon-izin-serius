@@ -25,9 +25,10 @@ public class Renderer {
 
         updateBars(monster);
 
-        hpBar.render(g, 10, 10, 150, 20);
-        energyBar.render(g, 10, 35, 150, 20);
-        happinessBar.render(g, 10, 60, 150, 20);
+        int statBarX = canvasWidth - 160;
+        hpBar.render(g, statBarX, 10, 150, 20);
+        energyBar.render(g, statBarX, 35, 150, 20);
+        happinessBar.render(g, statBarX, 60, 150, 20);
 
         renderInfo(g, monster);
         renderHungerWarning(g, monster);
@@ -51,7 +52,7 @@ public class Renderer {
         g.setFont(new Font("Arial", Font.BOLD, 14));
 
         int x = 10;
-        int y = 95;
+        int y = 25;
 
         g.drawString("Name: " + monster.getName(), x, y);
 
@@ -71,7 +72,7 @@ public class Renderer {
         if (monster.getHunger() > 70) {
             g.setColor(new Color(255, 100, 100, 200));
             g.setFont(new Font("Arial", Font.BOLD, 16));
-            g.drawString("HUNGRY!", 10, 180);
+            g.drawString("HUNGRY!", 10, 120);
         }
     }
 

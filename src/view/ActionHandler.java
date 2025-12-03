@@ -3,6 +3,7 @@ package view;
 import core.GameEngine;
 import model.Monster;
 import model.state.DeadState;
+import model.state.SleepState;
 import javax.swing.JOptionPane;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -21,8 +22,16 @@ public class ActionHandler {
             public void actionPerformed(ActionEvent e) {
                 Monster monster = engine.getMonster();
                 if (monster != null) {
+                    if (monster.isEgg()) {
+                        showEggMessage();
+                        return;
+                    }
                     if (monster.getCurrentState() instanceof DeadState) {
                         showDeadMessage();
+                        return;
+                    }
+                    if (monster.getCurrentState() instanceof SleepState) {
+                        showSleepingMessage("feed");
                         return;
                     }
                     monster.feed();
@@ -36,8 +45,16 @@ public class ActionHandler {
             public void actionPerformed(ActionEvent e) {
                 Monster monster = engine.getMonster();
                 if (monster != null) {
+                    if (monster.isEgg()) {
+                        showEggMessage();
+                        return;
+                    }
                     if (monster.getCurrentState() instanceof DeadState) {
                         showDeadMessage();
+                        return;
+                    }
+                    if (monster.getCurrentState() instanceof SleepState) {
+                        showSleepingMessage("play");
                         return;
                     }
                     monster.play();
@@ -51,8 +68,16 @@ public class ActionHandler {
             public void actionPerformed(ActionEvent e) {
                 Monster monster = engine.getMonster();
                 if (monster != null) {
+                    if (monster.isEgg()) {
+                        showEggMessage();
+                        return;
+                    }
                     if (monster.getCurrentState() instanceof DeadState) {
                         showDeadMessage();
+                        return;
+                    }
+                    if (monster.getCurrentState() instanceof SleepState) {
+                        showAlreadySleepingMessage();
                         return;
                     }
                     monster.sleep();
@@ -66,8 +91,16 @@ public class ActionHandler {
             public void actionPerformed(ActionEvent e) {
                 Monster monster = engine.getMonster();
                 if (monster != null) {
+                    if (monster.isEgg()) {
+                        showEggMessage();
+                        return;
+                    }
                     if (monster.getCurrentState() instanceof DeadState) {
                         showDeadMessage();
+                        return;
+                    }
+                    if (!(monster.getCurrentState() instanceof SleepState)) {
+                        showAlreadyAwakeMessage();
                         return;
                     }
                     monster.wakeUp();
@@ -106,15 +139,39 @@ public class ActionHandler {
 
                 if (result == JOptionPane.YES_OPTION) {
                     window.dispose();
-                    core.Main.main(new String[]{});
+                    core.Main.newGame();
                 }
             }
         };
+    }
+
+    private void showEggMessage() {
+        JOptionPane.showMessageDialog(window,
+                "Wait for the egg to hatch first!",
+                "Egg Stage", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void showDeadMessage() {
         JOptionPane.showMessageDialog(window,
                 "Your monster is dead. Start a new game!",
                 "RIP", JOptionPane.ERROR_MESSAGE);
+    }
+
+    private void showSleepingMessage(String action) {
+        JOptionPane.showMessageDialog(window,
+                "Your monster is sleeping! Wake it up first before you " + action + ".",
+                "Zzz...", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void showAlreadySleepingMessage() {
+        JOptionPane.showMessageDialog(window,
+                "Your monster is already sleeping!",
+                "Already Sleeping", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void showAlreadyAwakeMessage() {
+        JOptionPane.showMessageDialog(window,
+                "Your monster is already awake!",
+                "Already Awake", JOptionPane.INFORMATION_MESSAGE);
     }
 }

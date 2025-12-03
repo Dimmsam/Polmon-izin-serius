@@ -2,6 +2,7 @@ package core;
 
 import model.Monster;
 import utils.MonsterReader;
+import utils.MonsterWriter;
 import view.GameWindow;
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -20,7 +21,24 @@ public class Main {
         Runtime.getRuntime().addShutdownHook(new ShutdownHandler(engine));
 
         engine.start();
-        
+
+        GameWindow window = new GameWindow(engine);
+        window.display();
+    }
+
+    public static void newGame() {
+        File saveFile = new File("./saves/" + SAVE_FILE);
+        if (saveFile.exists()) {
+            saveFile.delete();
+        }
+
+        Monster newMonster = createNewMonster();
+
+        GameEngine engine = GameEngine.getInstance();
+        engine.stop();
+        engine.initialize(newMonster, null);
+        engine.start();
+
         GameWindow window = new GameWindow(engine);
         window.display();
     }

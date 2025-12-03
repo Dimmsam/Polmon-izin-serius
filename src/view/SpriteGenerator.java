@@ -81,10 +81,10 @@ public class SpriteGenerator {
                 return Color.GRAY;
         }
     }
-    
+
     private static Color getStateColor(String state) {
         switch (state.toLowerCase()) {
-            case "normal":
+            case "happy":
                 return new Color(100, 255, 100);
             case "hungry":
                 return new Color(255, 100, 100);

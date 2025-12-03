@@ -67,6 +67,14 @@ public class MonsterReader {
                 Monster monster = new Monster(ID, birthday, name, lastFedTimestamp, lastCareTimestamp,
                         hp, maxHP, minDmg, maxDmg, happiness, energy, maxEnergy);
 
+                EvolutionStage stage = EvolutionStage.valueOf(stageStr);
+                monster.setStage(stage);
+                monster.setName(name);
+
+                for (int i = 0; i < ageSeconds; i++) {
+                    monster.addAgeSeconds(1);
+                }
+
                 TimeSimulator.simulateTime(monster);
 
                 return monster;

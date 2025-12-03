@@ -12,11 +12,13 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Font;
 import java.awt.AlphaComposite;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
 public class GameCanvas extends JPanel {
     private static final int WIDTH = 400;
     private static final int HEIGHT = 300;
+    private static final double SPRITE_SCALE = 2.0;
 
     private GameEngine engine;
     private AssetLoader assetLoader;
@@ -42,6 +44,14 @@ public class GameCanvas extends JPanel {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
 
+        // Enable smooth scaling
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING,
+                RenderingHints.VALUE_RENDER_QUALITY);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
+
         Monster monster = engine.getMonster();
         if (monster != null) {
             checkEvolution(monster);
@@ -60,19 +70,22 @@ public class GameCanvas extends JPanel {
             }
 
             if (sprite != null) {
-                int baseX = (getWidth() - sprite.getWidth()) / 2;
-                int baseY = (getHeight() - sprite.getHeight()) / 2;
+                int scaledWidth = (int) (sprite.getWidth() * SPRITE_SCALE);
+                int scaledHeight = (int) (sprite.getHeight() * SPRITE_SCALE);
+
+                int baseX = (getWidth() - scaledWidth) / 2;
+                int baseY = (getHeight() - scaledHeight) / 2;
 
                 int offsetY = getAnimationOffset(monster);
 
                 if (evolutionEffectTimer > 0) {
-                    renderEvolutionEffect(g2d, baseX, baseY, sprite);
+                    renderEvolutionEffect(g2d, baseX, baseY + offsetY, sprite, scaledWidth, scaledHeight);
                 } else {
-                    g2d.drawImage(sprite, baseX, baseY + offsetY, null);
+                    g2d.drawImage(sprite, baseX, baseY + offsetY, scaledWidth, scaledHeight, null);
                 }
 
                 if (monster.getCurrentState() instanceof DeadState) {
-                    renderDeathOverlay(g2d, baseX, baseY, sprite);
+                    renderDeathOverlay(g2d, baseX, baseY + offsetY, scaledWidth, scaledHeight);
                 }
             }
 
@@ -92,10 +105,10 @@ public class GameCanvas extends JPanel {
         lastStage = monster.getStage();
     }
 
-    private void renderEvolutionEffect(Graphics2D g, int x, int y, BufferedImage sprite) {
+    private void renderEvolutionEffect(Graphics2D g, int x, int y, BufferedImage sprite, int width, int height) {
         float alpha = (float) Math.abs(Math.sin(evolutionEffectTimer * 0.3));
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
-        g.drawImage(sprite, x, y, null);
+        g.drawImage(sprite, x, y, width, height, null);
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
 
         g.setColor(new Color(255, 255, 0, 150));
@@ -103,15 +116,15 @@ public class GameCanvas extends JPanel {
         g.drawString("EVOLUTION!", getWidth()/2 - 60, getHeight()/2);
     }
 
-    private void renderDeathOverlay(Graphics2D g, int x, int y, BufferedImage sprite) {
+    private void renderDeathOverlay(Graphics2D g, int x, int y, int width, int height) {
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
         g.setColor(Color.BLACK);
-        g.fillRect(x, y, sprite.getWidth(), sprite.getHeight());
+        g.fillRect(x, y, width, height);
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
 
         g.setColor(Color.RED);
-        g.setFont(new Font("Arial", Font.BOLD, 14));
-        g.drawString("RIP", x + sprite.getWidth()/2 - 15, y + sprite.getHeight()/2);
+        g.setFont(new Font("Arial", Font.BOLD, 18));
+        g.drawString("RIP", x + width/2 - 15, y + height/2);
     }
 
     private int getAnimationOffset(Monster monster) {
@@ -127,6 +140,12 @@ public class GameCanvas extends JPanel {
     }
 
     private String getSimpleStateName(String fullName) {
-        return fullName.replace("State", "").toLowerCase();
+        String stateName = fullName.replace("State", "").toLowerCase();
+
+        if (stateName.equals("normal")) {
+            return "happy";
+        }
+
+        return stateName;
     }
 }
