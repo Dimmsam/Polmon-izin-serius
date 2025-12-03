@@ -10,30 +10,36 @@ public class SleepState implements PolmonState {
 
     @Override
     public void onTick(Monster ctx) {
-        ctx.modifyHealth(5);
-        ctx.modifyEnergy(10); // [UPDATE] Tidur memulihkan Energy dengan cepat
+        ctx.modifyHealth(3);
+        ctx.modifyEnergy(10);
+        ctx.modifyHappiness(1);
     }
 
     @Override
     public void feed(Monster ctx) {
-        System.out.println("Zzz... (Tidur)");
+        System.out.println("Zzz...");
     }
 
     @Override
     public void play(Monster ctx) {
-        System.out.println("Zzz... (Tidur)");
+        System.out.println("Zzz...");
     }
 
     @Override
     public void sleep(Monster ctx) {
-        System.out.println("Sudah tidur.");
+        System.out.println("Sudah tidur");
     }
 
     @Override
     public void wakeUp(Monster ctx) {
         System.out.println("Bangun!");
-        ctx.setState(new NormalState());
+
+        if (ctx.getHunger() >= 80) {
+            ctx.setState(new HungryState());
+        } else if (ctx.getHappiness() <= 20) {
+            ctx.setState(new BoredState());
+        } else {
+            ctx.setState(new NormalState());
+        }
     }
-
-
 }

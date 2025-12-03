@@ -10,23 +10,25 @@ public class NormalState implements PolmonState {
 
     @Override
     public void onTick(Monster ctx) {
-        // Lapar bertambah, happiness berkurang seiring waktu
-        ctx.modifyHunger(2);
+        ctx.modifyHunger(1);
         ctx.modifyHappiness(-1);
     }
 
     @Override
     public void feed(Monster ctx) {
-        System.out.println("Nyam nyam!");
         ctx.modifyHunger(-20);
         ctx.modifyHealth(5);
     }
 
     @Override
     public void play(Monster ctx) {
-        System.out.println("Main bola!");
+        if (ctx.getEnergy() < 20) {
+            System.out.println("Terlalu lelah untuk bermain");
+            return;
+        }
         ctx.modifyHappiness(15);
         ctx.modifyHunger(10);
+        ctx.modifyEnergy(-20);
     }
 
     @Override
@@ -36,6 +38,6 @@ public class NormalState implements PolmonState {
 
     @Override
     public void wakeUp(Monster ctx) {
-        System.out.println("Sudah bangun kok.");
+        System.out.println("Sudah bangun");
     }
 }

@@ -1,10 +1,11 @@
 package model;
 
 public enum SpeciesType {
-    FIRE, WATER; // Cukup 2 jenis sesuai gambar
+    KUCING, SLIME;
 
     public static SpeciesType fromId(int id) {
-        if (id == 0) return FIRE;
-        return WATER; // Default ke WATER jika ID 1 atau lainnya
+        if (id == 0) return KUCING;
+        if (id == 1) return SLIME;
+        return KUCING;
     }
 }

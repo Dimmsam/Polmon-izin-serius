@@ -1,38 +1,47 @@
 package model.state;
+
 import model.Monster;
 
 public class BoredState implements PolmonState {
     @Override
     public void onEnter(Monster ctx) {
-        System.out.println("State: BORED (Bosan)");
+        System.out.println("State: Bosan");
     }
 
     @Override
     public void onTick(Monster ctx) {
-        // Bosan bisa mengurangi energy (malas-malasan)
-        ctx.modifyEnergy(-1);
+        ctx.modifyHappiness(-3);
+        ctx.modifyHunger(1);
     }
 
     @Override
     public void feed(Monster ctx) {
-        System.out.println("Makan sambil cemberut...");
         ctx.modifyHunger(-10);
+        System.out.println("Makan tanpa semangat");
     }
 
     @Override
     public void play(Monster ctx) {
-        System.out.println("Yeay! Akhirnya main!");
-        ctx.modifyHappiness(30); // Main obat bosan
-        ctx.modifyEnergy(-10);   // Main kuras tenaga
-        // Logic pindah ke Normal ada di Monster.updateLogic()
+        if (ctx.getEnergy() < 20) {
+            System.out.println("Terlalu lelah");
+            return;
+        }
+
+        ctx.modifyHappiness(30);
+        ctx.modifyEnergy(-20);
+
+        if (ctx.getHappiness() > 50) {
+            ctx.setState(new NormalState());
+        }
     }
 
     @Override
     public void sleep(Monster ctx) {
-        System.out.println("Tidur karena bosan.");
         ctx.setState(new SleepState());
     }
 
     @Override
-    public void wakeUp(Monster ctx) { System.out.println("Masih bosan..."); }
+    public void wakeUp(Monster ctx) {
+        System.out.println("Masih bosan");
+    }
 }

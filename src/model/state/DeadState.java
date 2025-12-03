@@ -10,26 +10,25 @@ public class DeadState implements PolmonState {
 
     @Override
     public void onTick(Monster ctx) {
-        // Tidak ada efek, sudah mati
     }
 
     @Override
     public void feed(Monster ctx) {
-        System.out.println("RIP.");
+        System.out.println("RIP");
     }
 
     @Override
     public void play(Monster ctx) {
-        System.out.println("RIP.");
+        System.out.println("RIP");
     }
 
     @Override
     public void sleep(Monster ctx) {
-        System.out.println("RIP.");
+        System.out.println("RIP");
     }
 
     @Override
     public void wakeUp(Monster ctx) {
-        System.out.println("RIP.");
+        System.out.println("RIP");
     }
 }

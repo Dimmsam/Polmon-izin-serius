@@ -5,15 +5,16 @@ public class MonsterDatabase {
         if (stage == EvolutionStage.EGG) return "Mystery Egg";
 
         switch (type) {
-            case FIRE:
-                if (stage == EvolutionStage.BABY) return "Charmby";
-                if (stage == EvolutionStage.CHILD) return "Charmeleon";
-                return "Charizard"; // Adult
-            case WATER:
-                if (stage == EvolutionStage.BABY) return "Squirtby";
-                if (stage == EvolutionStage.CHILD) return "Wartortle";
-                return "Blastoise"; // Adult
-            default: return "Unknown";
+            case KUCING:
+                if (stage == EvolutionStage.BABY) return "Kitty";
+                if (stage == EvolutionStage.CHILD) return "Catmon";
+                return "Meowster";
+            case SLIME:
+                if (stage == EvolutionStage.BABY) return "Slimelet";
+                if (stage == EvolutionStage.CHILD) return "Slimeon";
+                return "Slimeking";
+            default:
+                return "Unknown";
         }
     }
 }

@@ -18,20 +18,19 @@ public class Monster implements Serializable {
     private int maxDamage;
     private int happiness;
     private int energy;
+    private int maxEnergy;
     private long lastFedTimestamp;
     private long lastCareTimestamp;
-    private int hunger; // 0-100
+    private int hunger;
     private int ageSeconds;
     private EvolutionStage stage;
     private SpeciesType species;
-
     private PolmonState currentState;
-
 
     public Monster(int ID, String birthday, String name,
                    long lastFedTimestamp, long lastCareTimestamp,
                    int hp, int maxHP, int minDamage, int maxDamage,
-                   int happiness) {
+                   int happiness, int energy, int maxEnergy) {
         this.ID = ID;
         this.birthday = birthday;
         this.name = name;
@@ -40,8 +39,8 @@ public class Monster implements Serializable {
         this.minDamage = minDamage;
         this.maxDamage = maxDamage;
         this.happiness = happiness;
-        this.hunger = 0;
-        this.energy = 100;
+        this.energy = energy;
+        this.maxEnergy = maxEnergy;
         this.lastFedTimestamp = lastFedTimestamp;
         this.lastCareTimestamp = lastCareTimestamp;
         this.hunger = 0;
@@ -52,96 +51,72 @@ public class Monster implements Serializable {
         this.name = MonsterDatabase.getName(this.species, this.stage);
     }
 
-    // --- New Modifiers ---
     public void modifyHealth(int val) {
         this.hp = Math.max(0, Math.min(maxHP, this.hp + val));
     }
-    public void modifyEnergy(int val) {
-        this.energy = Math.max(0, Math.min(100, this.energy + val));
-    }
+
     public void modifyHunger(int val) {
         this.hunger = Math.max(0, Math.min(100, this.hunger + val));
     }
+
     public void modifyHappiness(int val) {
         this.happiness = Math.max(0, Math.min(100, this.happiness + val));
     }
-    public void setStage(EvolutionStage stage) { this.stage = stage;}
+
+    public void modifyEnergy(int val) {
+        this.energy = Math.max(0, Math.min(maxEnergy, this.energy + val));
+    }
+
+    public void setStage(EvolutionStage stage) {
+        this.stage = stage;
+    }
 
     public void setState(PolmonState state) {
         this.currentState = state;
         this.currentState.onEnter(this);
     }
-    public void feed() { currentState.feed(this);}
-    public void play() { currentState.play(this);}
-    public void sleep() { currentState.sleep(this);}
-    public void wakeUp() { currentState.wakeUp(this);}
+
+    public void feed() {
+        currentState.feed(this);
+    }
+
+    public void play() {
+        currentState.play(this);
+    }
+
+    public void sleep() {
+        currentState.sleep(this);
+    }
+
+    public void wakeUp() {
+        currentState.wakeUp(this);
+    }
 
     public void updateLogic() {
         if (currentState instanceof DeadState) return;
 
         addAgeSeconds(1);
-        if (currentState != null) currentState.onTick(this);
 
-        // --- Logika Degradasi Pasif ---
-        if (stage != EvolutionStage.EGG) {
-            if (!(currentState instanceof SleepState)) {
-                modifyHunger(2);       // Lapar nambah
-                modifyHappiness(-1);   // Bahagia turun (lama2 bosan)
-                modifyEnergy(-1);      // Energy turun (lama2 ngantuk)
-            }
+        if (currentState != null) {
+            currentState.onTick(this);
         }
 
-        // --- Cek Transisi Status Otomatis ---
         if (hp <= 0) {
             setState(new DeadState());
         }
         else if (hunger >= 80 && !(currentState instanceof HungryState)) {
-            // Jika lapar > 80, otomatis jadi Sakit
             setState(new HungryState());
         }
+        else if (happiness <= 20 && !(currentState instanceof BoredState)) {
+            setState(new BoredState());
+        }
+        else if (hunger < 50 && happiness > 50 && !(currentState instanceof NormalState)
+                && !(currentState instanceof SleepState)) {
+            setState(new NormalState());
+        }
 
-        // --- Cek Evolusi ---
         if (EvolutionManager.canEvolve(this)) {
             EvolutionManager.evolve(this);
-            this.name = MonsterDatabase.getName(this.species, this.stage);
-            this.hp = maxHP;
-            this.happiness = 100;
-            this.energy = 100;
-        }
-    }
-    // Method baru untuk mengatur prioritas State
-    private void checkStatusTransitions() {
-        // 1. Prioritas Tertinggi: MATI
-        if (hp <= 0) {
-            if (!(currentState instanceof DeadState)) setState(new DeadState());
-            return;
-        }
-
-        // 2. Jika sedang Tidur, jangan diganggu status lain (kecuali bangun manual)
-        if (currentState instanceof SleepState) {
-            // Opsional: Bangun otomatis jika energy penuh
-            if (energy >= 100) {
-                System.out.println("Energi penuh! Bangun otomatis.");
-                setState(new NormalState());
-            }
-            return;
-        }
-
-        // 3. Cek Status Buruk (Prioritas: Lapar > Bosan > Ngantuk)
-        if (hunger >= 80) {
-            if (!(currentState instanceof HungryState)) setState(new HungryState());
-        }
-        else if (happiness <= 20) {
-            if (!(currentState instanceof BoredState)) setState(new BoredState());
-        }
-        else if (energy <= 10) {
-            // Otomatis ketiduran kalau energi habis banget
-            System.out.println("Pingsan karena kelelahan...");
-            setState(new SleepState());
-        }
-        // 4. Jika semua aman, kembali ke Normal
-        else {
-            if (!(currentState instanceof NormalState)) setState(new NormalState());
         }
     }
 
@@ -150,6 +125,8 @@ public class Monster implements Serializable {
     }
 
     public int getHunger() { return hunger; }
+    public int getEnergy() { return energy; }
+    public int getMaxEnergy() { return maxEnergy; }
     public int getAgeSeconds() { return ageSeconds; }
     public EvolutionStage getStage() { return stage; }
     public SpeciesType getSpecies() { return species; }
@@ -166,8 +143,6 @@ public class Monster implements Serializable {
     public int getHappiness() { return happiness; }
     public long getLastFedTimestamp() { return lastFedTimestamp; }
     public long getLastCareTimestamp() { return lastCareTimestamp; }
-    public int getEnergy() { return energy; }
-
 
     public int getHoursSinceLastFed() {
         long now = new Date().getTime();
@@ -206,6 +181,8 @@ public class Monster implements Serializable {
 
     @Override
     public String toString() {
-        return name + " (HP:" + hp + "/" + maxHP + ", Happiness:" + happiness + ")";
+        return name + " (HP:" + hp + "/" + maxHP +
+                ", Energy:" + energy + "/" + maxEnergy +
+                ", Happiness:" + happiness + ")";
     }
 }
