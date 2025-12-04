@@ -7,6 +7,10 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 import model.Monster;
 import utils.MonsterWriter;
+import utils.event.EventListener;
+import utils.event.GameEvent;
+import model.EvolutionStage;
+import model.state.PolmonState;
 
 public class GameEngine {
     private static GameEngine instance;
@@ -41,6 +45,27 @@ public class GameEngine {
     public void initialize(Monster monster, JPanel canvas) {
         this.monster = monster;
         this.canvas = canvas;
+
+        monster.getEvolutionEvents().subscribe(new EventListener<GameEvent<EvolutionStage>>() {
+            @Override
+            public void onEvent(GameEvent<EvolutionStage> event) {
+                System.out.println("[EVENT] Evolution occurred: " + event.getPayload());
+            }
+        });
+
+        monster.getStateChangeEvents().subscribe(new EventListener<GameEvent<PolmonState>>() {
+            @Override
+            public void onEvent(GameEvent<PolmonState> event) {
+                System.out.println("[EVENT] State changed: " + event.getPayload().getClass().getSimpleName());
+            }
+        });
+
+        monster.getHealthChangeEvents().subscribe(new EventListener<GameEvent<Integer>>() {
+            @Override
+            public void onEvent(GameEvent<Integer> event) {
+                System.out.println("[EVENT] HP changed to: " + event.getPayload());
+            }
+        });
     }
 
     public void start() {

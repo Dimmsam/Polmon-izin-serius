@@ -5,6 +5,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import model.state.*;
+import utils.event.EventManager;
+import utils.event.GameEvent;
 
 public class Monster implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -26,6 +28,9 @@ public class Monster implements Serializable {
     private EvolutionStage stage;
     private SpeciesType species;
     private PolmonState currentState;
+    private transient EventManager<GameEvent<EvolutionStage>> evolutionEvents;
+    private transient EventManager<GameEvent<PolmonState>> stateChangeEvents;
+    private transient EventManager<GameEvent<Integer>> healthChangeEvents;
 
     public Monster(int ID, String birthday, String name,
                    long lastFedTimestamp, long lastCareTimestamp,
@@ -49,10 +54,18 @@ public class Monster implements Serializable {
         this.species = SpeciesType.fromId(ID);
         this.currentState = new NormalState();
         this.name = MonsterDatabase.getName(this.species, this.stage);
+        this.evolutionEvents = new EventManager<>();
+        this.stateChangeEvents = new EventManager<>();
+        this.healthChangeEvents = new EventManager<>();
     }
 
     public void modifyHealth(int val) {
+        int oldHP = this.hp;
         this.hp = Math.max(0, Math.min(maxHP, this.hp + val));
+
+        if (healthChangeEvents != null && oldHP != this.hp) {
+            healthChangeEvents.notifyListeners(new GameEvent<>("HP_CHANGE", this.hp));
+        }
     }
 
     public void modifyHunger(int val) {
@@ -73,11 +86,19 @@ public class Monster implements Serializable {
 
     public void setStage(EvolutionStage stage) {
         this.stage = stage;
+
+        if (evolutionEvents != null) {
+            evolutionEvents.notifyListeners(new GameEvent<>("EVOLUTION", stage));
+        }
     }
 
     public void setState(PolmonState state) {
         this.currentState = state;
         this.currentState.onEnter(this);
+
+        if (stateChangeEvents != null) {
+            stateChangeEvents.notifyListeners(new GameEvent<>("STATE_CHANGE", state));
+        }
     }
 
     public void feed() {
@@ -191,6 +212,27 @@ public class Monster implements Serializable {
             e.printStackTrace();
             return 0;
         }
+    }
+
+    public EventManager<GameEvent<EvolutionStage>> getEvolutionEvents() {
+        if (evolutionEvents == null) {
+            evolutionEvents = new EventManager<>();
+        }
+        return evolutionEvents;
+    }
+
+    public EventManager<GameEvent<PolmonState>> getStateChangeEvents() {
+        if (stateChangeEvents == null) {
+            stateChangeEvents = new EventManager<>();
+        }
+        return stateChangeEvents;
+    }
+
+    public EventManager<GameEvent<Integer>> getHealthChangeEvents() {
+        if (healthChangeEvents == null) {
+            healthChangeEvents = new EventManager<>();
+        }
+        return healthChangeEvents;
     }
 
     public void starve() {
